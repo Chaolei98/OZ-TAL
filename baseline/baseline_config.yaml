@@ -13,7 +13,8 @@ model:
   checkpoint: /path/to/ViCLIP-L_InternVid-FLT-10M.pth
 
 inference:
-  threshold: 0.31
+  p: 0.8
+  logit_scale: 100.0
   device: cuda:0
   start: 0
   end: null
