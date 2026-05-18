@@ -41,3 +41,32 @@ Useful options:
 --start 0 --end 100             # process part of the video list
 --overwrite                     # overwrite existing .npy files
 ```
+
+# Baseline Inference
+
+Run the softmax max-score visual-text baseline:
+
+```bash
+cd baseline
+python baseline.py --config baseline_config.yaml
+```
+
+Main settings are in `/baseline/baseline_config.yaml`:
+
+```yaml
+feature_dir: /path/to/thumos_features
+split_file: /path/to/THUMOS14/test/split_0.list
+fps_json: /path/to/thumos_fps.json
+output_dir: /path/to/save/baseline_outputs
+code_dir: /path/to/viclip_code_parent_dir
+checkpoint: /path/to/ViCLIP-L_InternVid-FLT-10M.pth
+p: 0.8
+```
+
+Outputs are saved to:
+
+```text
+/path/to/save/baseline_outputs/predictions.json
+/path/to/save/baseline_outputs/predictions.csv
+```
+
