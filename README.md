@@ -18,3 +18,22 @@ conda create -n oztal python=3.8 -y
 conda activate oztal
 pip install -r requirements.txt
 ```
+# Feature Extraction
+To accelerate inference, we allow optional offline feature extraction. Importantly, this feature extraction process still follows the online setting, meaning that the feature of the current frame does not incorporate any future information.
+
+Extract ViCLIP online features:
+
+```bash
+conda activate oztal
+python extract_thumos_viclip_features.py \
+  --video-dir /path/to/thumos_video/val_test \
+  --output-dir /path/to/save/thumos_viclip_online
+```
+
+Useful options:
+
+```bash
+--device cuda:0                 # or cpu
+--start 0 --end 100             # process part of the video list
+--overwrite                     # overwrite existing .npy files
+```
