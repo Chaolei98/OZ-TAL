@@ -1,2 +1,13 @@
-# OZ-TAL
-Implementation of "OZ-TAL: Online Zero-Shot Temporal Action Localization".
+# [OZ-TAL: Online Zero-Shot Temporal Action Localization](https://arxiv.org/abs/2605.09976)
+
+[![Paper](https://img.shields.io/badge/arXiv-2403.16973-brightgreen.svg?style=flat-square)](https://arxiv.org/pdf/2605.09976)  
+
+## ABSTRACT
+Online Temporal Action Localization (On-TAL) aims to detect the occurrence time and category of actions in untrimmed streaming videos immediately upon their completion. Recent advancements in this field focus on developing more sophisticated frameworks, shifting from Online Action Detection (OAD)-based aggregation paradigm to instance-level understanding. However, existing approaches are typically trained on specific domains and often exhibit limited generalization capabilities when applied to arbitrary videos, particularly in the presence of previously unseen actions.
+In this paper, we introduce a new task called Online Zero-shot Temporal Action Localization (OZ-TAL), which aims to detect previously unseen actions in an online fashion. 
+\textcolor{blue}{To address this task, we propose VFEAL, a training-free framework built on off-the-shelf vision-language models (VLMs). 
+VFEAL first extracts visual and textual representations with class-specific prompts, and then enhances visual representations through a memory-guided feature enhancement mechanism. 
+It further mitigates the inference bias of VLMs with a background-aware K-way classification strategy. 
+Finally, an online action span prediction module is employed to generate action instances. 
+Extensive experiments on THUMOS14 and ActivityNet-1.3 demonstrate that VFEAL achieves strong performance on the OZ-TAL benchmark. 
+
