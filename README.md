@@ -11,3 +11,10 @@ It further mitigates the inference bias of VLMs with a background-aware K-way cl
 Finally, an online action span prediction module is employed to generate action instances. 
 Extensive experiments on THUMOS14 and ActivityNet-1.3 demonstrate that VFEAL achieves strong performance on the OZ-TAL benchmark. 
 
+# Environment Setup
+
+```bash
+conda create -n oztal python=3.8 -y
+conda activate oztal
+pip install -r requirements.txt
+```
