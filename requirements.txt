@@ -1,4 +1,4 @@
-# Main runtime dependencies for VideoCLIP/VFEAL
+# Main runtime dependencies for VideoCLIP/OZTAL
 # Tested with Python 3.8.19 in conda env.
 # For GPU usage, install a PyTorch build matching your CUDA driver if needed:
 # https://pytorch.org/get-started/locally/
