@@ -8,6 +8,7 @@ paths:
 
 model:
   name: viclip
+  code_dir: /path/to/viclip_code_parent_dir
   size: l
   checkpoint: /path/to/ViCLIP-L_InternVid-FLT-10M.pth
 
