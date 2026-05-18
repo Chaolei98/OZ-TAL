@@ -70,3 +70,14 @@ Outputs are saved to:
 /path/to/save/baseline_outputs/predictions.csv
 ```
 
+# Citation
+
+If you find this work useful for your research, please consider citing our paper:
+
+```bibtex
+@article{han2026oz,
+  title={OZ-TAL: Online Zero-Shot Temporal Action Localization},
+  author={Han, Chaolei and Wang, Hongsong and Gong, Xin and Gui, Jie},
+  journal={arXiv preprint arXiv:2605.09976},
+  year={2026}
+}
