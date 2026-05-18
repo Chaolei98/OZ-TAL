@@ -15,7 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Run the hard-threshold visual-text similarity baseline."
+        description="Run the softmax max-score visual-text baseline."
     )
     parser.add_argument(
         "--config",
@@ -81,9 +81,9 @@ def load_video_features(feature_path, device):
     return features.squeeze()
 
 
-def compute_similarity(image_features, text_features):
+def compute_scores(image_features, text_features, logit_scale=100.0):
     image_features = normalize(image_features)
-    return image_features @ text_features.T
+    return (logit_scale * image_features @ text_features.T).softmax(dim=-1)
 
 
 def get_video_fps(fps_data, video_name):
@@ -92,35 +92,45 @@ def get_video_fps(fps_data, video_name):
     return 30.0
 
 
-def group_actions(scores, video_name, class_names, fps, threshold):
-    scores_np = scores.detach().cpu().numpy()
-    num_classes = scores_np.shape[-1]
+def find_segments_of_ones(binary_mask):
+    segments = []
+    current_segment = None
+    for idx, value in enumerate(binary_mask):
+        if value == 1:
+            if current_segment is None:
+                current_segment = [idx]
+        elif current_segment is not None:
+            current_segment.append(idx - 1)
+            segments.append(current_segment)
+            current_segment = None
+    if current_segment is not None:
+        current_segment.append(len(binary_mask) - 1)
+        segments.append(current_segment)
+    return segments
+
+
+def group_actions(scores, video_name, class_names, fps, p):
+    pred_scores = scores.max(dim=-1).values
+    pred_mask = torch.where(pred_scores > p, 1, 0).detach().cpu().numpy()
+    segments = find_segments_of_ones(pred_mask)
     outputs = []
 
-    for class_idx in range(num_classes):
-        active = scores_np[:, class_idx] >= threshold
-        start = None
-
-        for frame_idx, is_active in enumerate(active):
-            is_last = frame_idx == len(active) - 1
-
-            if is_active and start is None:
-                start = frame_idx
-
-            if start is not None and ((not is_active) or is_last):
-                end = frame_idx if is_active and is_last else frame_idx - 1
-                segment_scores = scores_np[start : end + 1, class_idx]
-                outputs.append(
-                    {
-                        "video-id": video_name,
-                        "t-start": start / fps,
-                        "t-end": end / fps,
-                        "label": class_names[class_idx],
-                        "label_id": class_idx,
-                        "score": float(segment_scores.mean()),
-                    }
-                )
-                start = None
+    for start, end in segments:
+        segment_scores = scores[start:end]
+        if segment_scores.numel() == 0:
+            continue
+        mean_scores = segment_scores.mean(dim=0)
+        label_id = int(mean_scores.argmax().item())
+        outputs.append(
+            {
+                "video-id": video_name,
+                "t-start": start / fps,
+                "t-end": end / fps,
+                "label": class_names[label_id],
+                "label_id": label_id,
+                "score": float(mean_scores[label_id].detach().cpu().item()),
+            }
+        )
 
     return outputs
 
@@ -153,7 +163,7 @@ def main():
 
     requested_device = cfg["inference"].get("device", "cuda:0")
     device = torch.device(requested_device if torch.cuda.is_available() else "cpu")
-    threshold = float(cfg["inference"]["threshold"])
+    p = float(cfg["inference"]["p"])
     start = cfg["inference"].get("start", 0)
     end = cfg["inference"].get("end")
 
@@ -173,9 +183,13 @@ def main():
     for idx, feature_path in enumerate(feature_paths, start=start):
         video_name = feature_path.stem
         image_features = load_video_features(feature_path, device)
-        scores = compute_similarity(image_features, text_features)
+        scores = compute_scores(
+            image_features,
+            text_features,
+            float(cfg["inference"].get("logit_scale", 100.0)),
+        )
         fps = get_video_fps(fps_data, video_name)
-        outputs = group_actions(scores, video_name, class_names, fps, threshold)
+        outputs = group_actions(scores, video_name, class_names, fps, p)
         all_outputs.extend(outputs)
         print(f"[{idx}] {video_name}: {len(outputs)} segments")
 
