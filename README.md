@@ -3,7 +3,7 @@
 [![Paper](https://img.shields.io/badge/arXiv-2403.16973-brightgreen.svg?style=flat-square)](https://arxiv.org/pdf/2605.09976)  
 
 <p align="center">
-  <img src="figures/overview.pdf" width="600">
+  <img src="figures/overview.png" width="600">
 </p>
 
 ## ABSTRACT
