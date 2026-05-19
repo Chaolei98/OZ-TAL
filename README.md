@@ -42,16 +42,16 @@ Useful options:
 --overwrite                     # overwrite existing .npy files
 ```
 
-# Baseline Inference
+# Inference
 
 Run the softmax max-score visual-text baseline:
 
 ```bash
-cd baseline
+cd models
 python baseline.py --config baseline_config.yaml
 ```
 
-Main settings are in `/baseline/baseline_config.yaml`:
+Main settings are in `/models/baseline_config.yaml`:
 
 ```yaml
 feature_dir: /path/to/thumos_features
